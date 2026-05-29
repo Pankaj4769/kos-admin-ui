@@ -1,0 +1,130 @@
+<div class="page">
+  <div class="breadcrumb">
+    <a routerLink="/tenants" class="link"><mat-icon>arrow_back</mat-icon> Tenants</a>
+  </div>
+
+  @if (loading()) {
+    <div class="center-flex"><mat-progress-spinner mode="indeterminate" diameter="40" /></div>
+  } @else if (error()) {
+    <div class="error-banner"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
+  } @else if (data(); as d) {
+    <div class="header">
+      <div>
+        <div class="text-muted text-small text-mono">ID {{ d.tenant.id }}</div>
+        <h1 class="page-title">{{ d.tenant.name }}</h1>
+        <div class="chip-row">
+          <span class="chip chip-{{ d.tenant.status | lowercase }}">{{ d.tenant.status }}</span>
+          @if (d.tenant.plan) {
+            <span class="chip chip-{{ (d.tenant.planStatus ?? '') | lowercase }}">
+              {{ d.tenant.plan }} · {{ d.tenant.planStatus ?? '?' }}
+            </span>
+          }
+        </div>
+      </div>
+      <div class="actions">
+        @if (canSuspend()) {
+          @if (d.tenant.status === 'ACTIVE') {
+            <button mat-flat-button color="warn" (click)="suspend()">
+              <mat-icon>pause_circle</mat-icon> Suspend
+            </button>
+          } @else {
+            <button mat-flat-button color="primary" (click)="reactivate()">
+              <mat-icon>play_circle</mat-icon> Reactivate
+            </button>
+          }
+        }
+      </div>
+    </div>
+
+    @if (d.tenant.status === 'SUSPENDED') {
+      <div class="warn-banner">
+        <mat-icon>info</mat-icon>
+        <div>
+          <div><strong>Suspended {{ d.tenant.suspendedAt | date:'short' }}</strong>
+            @if (d.tenant.suspendedByAdminEmail) { by {{ d.tenant.suspendedByAdminEmail }} }</div>
+          @if (d.tenant.suspensionReason) {
+            <div>Reason: {{ d.tenant.suspensionReason }}</div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total orders</div>
+        <div class="kpi-value">{{ d.stats.totalOrders }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Paid orders</div>
+        <div class="kpi-value">{{ d.stats.paidOrders }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue (last 30d)</div>
+        <div class="kpi-value">{{ d.stats.revenueLast30Days | currency:'INR':'symbol-narrow':'1.0-0' }}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Employees</div>
+        <div class="kpi-value">{{ d.stats.activeEmployeeCount }} / {{ d.stats.employeeCount }}</div>
+        <div class="kpi-sub">active / total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pending leaves</div>
+        <div class="kpi-value">{{ d.stats.pendingLeavesCount }}</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2 class="section-title">Owner</h2>
+        <dl class="kv">
+          <dt>Name</dt>      <dd>{{ d.tenant.ownerName ?? '—' }}</dd>
+          <dt>Email</dt>     <dd>{{ d.tenant.ownerEmail ?? '—' }}</dd>
+          <dt>Mobile</dt>    <dd>{{ d.tenant.ownerMobile ?? '—' }}</dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h2 class="section-title">Subscription</h2>
+        <dl class="kv">
+          <dt>Plan</dt>            <dd>{{ d.tenant.plan ?? '—' }}</dd>
+          <dt>Status</dt>          <dd>{{ d.tenant.planStatus ?? '—' }}</dd>
+          <dt>Start</dt>           <dd>{{ d.tenant.planStartDate ? (d.tenant.planStartDate | date:'mediumDate') : '—' }}</dd>
+          <dt>Expiry</dt>          <dd>{{ d.tenant.planExpiryDate ? (d.tenant.planExpiryDate | date:'mediumDate') : '—' }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Users ({{ d.users.length }})</h2>
+      @if (d.users.length === 0) {
+        <div class="empty">No users for this tenant.</div>
+      } @else {
+        <table mat-table [dataSource]="d.users" class="full-width">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef>Username</th>
+            <td mat-cell *matCellDef="let u">{{ u.username }}</td>
+          </ng-container>
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let u">{{ u.email ?? '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="mobile">
+            <th mat-header-cell *matHeaderCellDef>Mobile</th>
+            <td mat-cell *matCellDef="let u">{{ u.mobile ?? '—' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let u">
+              <span class="role-chip">{{ u.role }}</span>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="userColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: userColumns;"></tr>
+        </table>
+      }
+    </div>
+  }
+</div>

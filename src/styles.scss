@@ -1,0 +1,43 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #f5f7fb;
+  color: #1a1f2c;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* Utility classes used across the app. */
+.flex-row    { display: flex; flex-direction: row; }
+.flex-col    { display: flex; flex-direction: column; }
+.gap-1       { gap: 4px; }
+.gap-2       { gap: 8px; }
+.gap-3       { gap: 12px; }
+.gap-4       { gap: 16px; }
+.gap-6       { gap: 24px; }
+.gap-8       { gap: 32px; }
+.grow        { flex: 1 1 auto; min-width: 0; }
+.text-muted  { color: #6b7280; }
+.text-small  { font-size: 12px; }
+.text-mono   { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.page        { padding: 24px; max-width: 1400px; margin: 0 auto; }
+.page-title  { font-size: 24px; font-weight: 500; margin: 0 0 16px; }
+.section-title { font-size: 16px; font-weight: 500; margin: 0 0 12px; color: #1a1f2c; }
+.card        { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }

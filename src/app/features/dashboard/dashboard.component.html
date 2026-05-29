@@ -1,0 +1,118 @@
+<div class="page">
+  <h1 class="page-title">Dashboard</h1>
+
+  @if (loading()) {
+    <div class="center-flex"><mat-progress-spinner mode="indeterminate" diameter="40" /></div>
+  } @else if (error()) {
+    <div class="error-banner">
+      <mat-icon>error_outline</mat-icon> {{ error() }}
+    </div>
+  } @else if (data(); as d) {
+    <h2 class="section-title">Tenants</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #eef2ff; color: #3b3bd9;">storefront</mat-icon>
+        <div>
+          <div class="kpi-label">Total</div>
+          <div class="kpi-value">{{ d.tenants.total | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #dcfce7; color: #166534;">check_circle</mat-icon>
+        <div>
+          <div class="kpi-label">Active</div>
+          <div class="kpi-value">{{ d.tenants.active | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fee2e2; color: #991b1b;">pause_circle</mat-icon>
+        <div>
+          <div class="kpi-label">Suspended</div>
+          <div class="kpi-value">{{ d.tenants.suspended | number }}</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Subscriptions</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #dcfce7; color: #166534;">verified</mat-icon>
+        <div>
+          <div class="kpi-label">Active</div>
+          <div class="kpi-value">{{ d.subscriptions.active | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fef3c7; color: #92400e;">hourglass_top</mat-icon>
+        <div>
+          <div class="kpi-label">Trial</div>
+          <div class="kpi-value">{{ d.subscriptions.trial | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #f3f4f6; color: #6b7280;">history_toggle_off</mat-icon>
+        <div>
+          <div class="kpi-label">Expired</div>
+          <div class="kpi-value">{{ d.subscriptions.expired | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fee2e2; color: #991b1b;">cancel</mat-icon>
+        <div>
+          <div class="kpi-label">Cancelled</div>
+          <div class="kpi-value">{{ d.subscriptions.cancelled | number }}</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Revenue</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #ecfeff; color: #155e75;">account_balance</mat-icon>
+        <div>
+          <div class="kpi-label">Total paid</div>
+          <div class="kpi-value">{{ d.revenue.totalPaid | currency:'INR':'symbol-narrow':'1.0-0' }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #ecfeff; color: #155e75;">trending_up</mat-icon>
+        <div>
+          <div class="kpi-label">Last 30 days</div>
+          <div class="kpi-value">{{ d.revenue.last30Days | currency:'INR':'symbol-narrow':'1.0-0' }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fef3c7; color: #92400e;">payments</mat-icon>
+        <div>
+          <div class="kpi-label">MRR</div>
+          <div class="kpi-value">{{ d.revenue.mrr | currency:'INR':'symbol-narrow':'1.0-0' }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fef3c7; color: #92400e;">savings</mat-icon>
+        <div>
+          <div class="kpi-label">ARR</div>
+          <div class="kpi-value">{{ d.revenue.arr | currency:'INR':'symbol-narrow':'1.0-0' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Activity (last 7 days)</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #dcfce7; color: #166534;">person_add</mat-icon>
+        <div>
+          <div class="kpi-label">New signups</div>
+          <div class="kpi-value">{{ d.activity.signupsLast7Days | number }}</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <mat-icon class="kpi-icon" style="background: #fee2e2; color: #991b1b;">block</mat-icon>
+        <div>
+          <div class="kpi-label">Suspensions</div>
+          <div class="kpi-value">{{ d.activity.suspensionsLast7Days | number }}</div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
