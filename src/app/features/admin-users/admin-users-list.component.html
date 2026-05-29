@@ -1,0 +1,88 @@
+<div class="page">
+  <div class="header">
+    <h1 class="page-title">Admin users</h1>
+    <button mat-flat-button color="primary" (click)="openInvite()">
+      <mat-icon>person_add</mat-icon> Invite admin
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="center-flex"><mat-progress-spinner mode="indeterminate" diameter="40" /></div>
+  } @else if (error()) {
+    <div class="error-banner"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
+  } @else {
+    <div class="table-card">
+      <table mat-table [dataSource]="admins()" class="full-width">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let u">{{ u.name }}</td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+        </ng-container>
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <td mat-cell *matCellDef="let u">
+            <span class="role-chip role-{{ u.role | lowercase }}">{{ u.role }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="enabled">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let u">
+            @if (u.enabled) {
+              <span class="status-chip ok">Enabled</span>
+            } @else {
+              <span class="status-chip off">Disabled</span>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="mustReset">
+          <th mat-header-cell *matHeaderCellDef>Reset?</th>
+          <td mat-cell *matCellDef="let u">
+            @if (u.mustResetPassword) {
+              <mat-icon class="warn-icon" matTooltip="Must reset on next login">priority_high</mat-icon>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="lastLoginAt">
+          <th mat-header-cell *matHeaderCellDef>Last login</th>
+          <td mat-cell *matCellDef="let u">
+            {{ u.lastLoginAt ? (u.lastLoginAt | date:'short') : '—' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Created</th>
+          <td mat-cell *matCellDef="let u">{{ u.createdAt | date:'mediumDate' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let u" class="actions-col">
+            <button mat-icon-button [matMenuTriggerFor]="m">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #m>
+              <button mat-menu-item (click)="toggleEnabled(u)">
+                <mat-icon>{{ u.enabled ? 'block' : 'check_circle' }}</mat-icon>
+                <span>{{ u.enabled ? 'Disable' : 'Enable' }}</span>
+              </button>
+              <button mat-menu-item (click)="resetPassword(u)">
+                <mat-icon>lock_reset</mat-icon><span>Reset password</span>
+              </button>
+              <button mat-menu-item (click)="delete(u)">
+                <mat-icon>delete</mat-icon><span>Delete</span>
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      @if (admins().length === 0) {
+        <div class="empty">No admin users yet — click "Invite admin" to add one.</div>
+      }
+    </div>
+  }
+</div>

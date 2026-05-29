@@ -1,0 +1,128 @@
+<div class="page">
+  <h1 class="page-title">Audit log</h1>
+  <p class="text-muted text-small">
+    Every admin action is recorded here. Read endpoints on this page itself are not audited
+    (to avoid feedback loops).
+  </p>
+
+  <div class="toolbar" [formGroup]="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Actor email</mat-label>
+      <input matInput formControlName="actor" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Action</mat-label>
+      <input matInput formControlName="action" placeholder="e.g. SUSPEND_TENANT" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Target type</mat-label>
+      <input matInput formControlName="targetType" placeholder="e.g. Tenant" />
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>From</mat-label>
+      <input matInput [matDatepicker]="fromPicker" formControlName="from" />
+      <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>To</mat-label>
+      <input matInput [matDatepicker]="toPicker" formControlName="to" />
+      <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker></mat-datepicker>
+    </mat-form-field>
+    <button mat-button (click)="clearFilters()">Clear</button>
+  </div>
+
+  @if (loading()) {
+    <div class="center-flex"><mat-progress-spinner mode="indeterminate" diameter="40" /></div>
+  } @else if (error()) {
+    <div class="error-banner"><mat-icon>error_outline</mat-icon> {{ error() }}</div>
+  } @else if (page(); as p) {
+    <div class="table-card">
+      <table mat-table [dataSource]="p.content" multiTemplateDataRows class="full-width">
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>When</th>
+          <td mat-cell *matCellDef="let r">{{ r.createdAt | date:'short' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actor">
+          <th mat-header-cell *matHeaderCellDef>Actor</th>
+          <td mat-cell *matCellDef="let r">
+            <div>{{ r.actorEmail ?? '—' }}</div>
+            <div class="text-muted text-small">{{ r.actorRole ?? '' }}</div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="action-chip">{{ r.action }}</span>
+            @if (r.targetType) {
+              <div class="text-muted text-small">{{ r.targetType }}{{ r.targetId ? ' #' + r.targetId : '' }}</div>
+            }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="method">
+          <th mat-header-cell *matHeaderCellDef>Method</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="method method-{{ r.httpMethod | lowercase }}">{{ r.httpMethod ?? '' }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="path">
+          <th mat-header-cell *matHeaderCellDef>Path</th>
+          <td mat-cell *matCellDef="let r" class="text-mono">{{ r.path ?? '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="outcome">
+          <th mat-header-cell *matHeaderCellDef>Outcome</th>
+          <td mat-cell *matCellDef="let r">
+            @if (r.outcome === 'SUCCESS') {
+              <span class="outcome ok">SUCCESS</span>
+            } @else if (r.outcome === 'FAILURE') {
+              <span class="outcome fail">FAILURE</span>
+            } @else { {{ r.outcome }} }
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="expand">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let r">
+            <button mat-icon-button (click)="toggleExpand(r.id)"
+                    [attr.aria-label]="expanded() === r.id ? 'Collapse' : 'Expand'">
+              <mat-icon>{{ expanded() === r.id ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+          <td mat-cell *matCellDef="let r" [attr.colspan]="displayedColumns.length">
+            <div class="detail-row" [@detailExpand]="expanded() === r.id ? 'expanded' : 'collapsed'">
+              <div class="kv-grid">
+                <div><label>IP</label><div>{{ r.ipAddress ?? '—' }}</div></div>
+                <div><label>Target ID</label><div>{{ r.targetId ?? '—' }}</div></div>
+              </div>
+              @if (r.detailsJson) {
+                <label class="snapshot-label">Result snapshot</label>
+                <pre class="snapshot">{{ prettyJson(r.detailsJson) }}</pre>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="data-row"
+            [class.expanded-row]="expanded() === row.id"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail'];" class="detail-tr"></tr>
+      </table>
+
+      @if (p.content.length === 0) {
+        <div class="empty">No audit entries match these filters.</div>
+      }
+
+      <mat-paginator
+        [length]="p.totalElements"
+        [pageSize]="p.size"
+        [pageIndex]="p.page"
+        [pageSizeOptions]="[25, 50, 100, 200]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons />
+    </div>
+  }
+</div>

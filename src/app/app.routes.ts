@@ -28,15 +28,27 @@ export const routes: Routes = [
         path: 'change-password',
         loadComponent: () => import('./features/change-password/change-password.component').then(m => m.ChangePasswordComponent)
       },
-      // Stubs: backend exists, UI is the next iteration.
-      { path: 'users', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Users', endpoint: 'GET /admin-api/users' } },
-      { path: 'plans', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Plans', endpoint: 'GET /admin-api/plans' } },
+      {
+        path: 'users',
+        loadComponent: () => import('./features/users/users-list.component').then(m => m.UsersListComponent)
+      },
+      {
+        path: 'plans',
+        loadComponent: () => import('./features/plans/plans-list.component').then(m => m.PlansListComponent)
+      },
+      {
+        path: 'admin-users',
+        loadComponent: () => import('./features/admin-users/admin-users-list.component').then(m => m.AdminUsersListComponent)
+      },
+      {
+        path: 'audit',
+        loadComponent: () => import('./features/audit/audit-list.component').then(m => m.AuditListComponent)
+      },
+      // Remaining stubs: backend is ready, UI will land in a future iteration.
       { path: 'subscriptions', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Subscriptions', endpoint: 'GET /admin-api/subscriptions' } },
       { path: 'employees', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Employees', endpoint: 'GET /admin-api/employees' } },
       { path: 'leaves', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Leaves', endpoint: 'GET /admin-api/leaves' } },
-      { path: 'payroll', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Payroll', endpoint: 'GET /admin-api/payroll/salary-slips' } },
-      { path: 'audit', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Audit log', endpoint: 'GET /admin-api/audit' } },
-      { path: 'admin-users', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Admin users', endpoint: 'GET /admin-api/admin-users' } }
+      { path: 'payroll', loadComponent: () => import('./features/placeholder/placeholder.component').then(m => m.PlaceholderComponent), data: { title: 'Payroll', endpoint: 'GET /admin-api/payroll/salary-slips' } }
     ]
   },
   { path: '**', redirectTo: '' }
