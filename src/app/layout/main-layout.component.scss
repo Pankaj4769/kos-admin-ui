@@ -26,22 +26,30 @@
     .brand-sub   { font-size: 11px; color: #94a3b8; }
   }
 
+  // Material 3 mat-list-item uses MDC CSS variables that beat parent `color`.
+  // Override the MDC tokens directly so labels + icons actually go light.
   mat-nav-list a {
-    color: #e6edf5;
     border-radius: 8px;
     margin: 2px 8px;
     height: 42px;
 
-    mat-icon { color: #94a3b8; }
+    --mdc-list-list-item-label-text-color: #ffffff;
+    --mdc-list-list-item-hover-label-text-color: #ffffff;
+    --mdc-list-list-item-focus-label-text-color: #ffffff;
+    --mdc-list-list-item-leading-icon-color: #94a3b8;
+    --mdc-list-list-item-hover-leading-icon-color: #ffffff;
+    --mdc-list-list-item-focus-leading-icon-color: #ffffff;
+    --mdc-list-list-item-hover-state-layer-color: #ffffff;
+    --mdc-list-list-item-hover-state-layer-opacity: 0.06;
+    --mdc-list-list-item-focus-state-layer-color: #ffffff;
+    --mdc-list-list-item-focus-state-layer-opacity: 0.08;
+
+    color: #ffffff; // belt-and-suspenders for any text outside the MDC label slot
 
     &.active {
-      background: rgba(94, 179, 255, 0.15);
-      color: #ffffff;
-      mat-icon { color: #5eb3ff; }
-    }
-
-    &:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(94, 179, 255, 0.18);
+      --mdc-list-list-item-label-text-color: #ffffff;
+      --mdc-list-list-item-leading-icon-color: #5eb3ff;
     }
   }
 }
